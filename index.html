@@ -21,8 +21,8 @@ button.dark{background:#28282d;color:#fff;border:1px solid #444}
 .tab.active{background:#f28a1e;color:#111}
 .panel{display:none}.panel.active{display:block}
 .badge{display:inline-block;background:#24170b;border:1px solid #5a3511;color:#ffbd7b;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}
-.notice{border-left:4px solid #f28a1e;background:#141414;padding:12px;border-radius:12px;color:#ddd}
 .small{font-size:13px;color:#aaa}
+.ok{color:#75d68b;font-weight:900}
 </style>
 </head>
 <body>
@@ -44,7 +44,7 @@ button.dark{background:#28282d;color:#fff;border:1px solid #444}
 <div class="card">
 <span class="badge">Hauptfunktion</span>
 <h2>Automatisch alles erstellen</h2>
-<p>Du fügst die Kurse ein. Die App entscheidet und füllt danach Kurse, Content, Ads und App-2-Auftrag automatisch.</p>
+<p>Nach dem Klick erscheinen alle Ergebnisse direkt hier unten und zusätzlich in den Tabs.</p>
 
 <label>Kurse / Angebote mit Datum, Preis, freien Plätzen</label>
 <textarea id="autoCourses" placeholder="Feuer & Handwerk, 06.06.2026, 145 CHF, 9 freie Plätze
@@ -64,9 +64,16 @@ Anime Food Night, 26.06.2026, 180 CHF, 10 freie Plätze"></textarea>
 <textarea id="autoMaterial" placeholder="Florence kann Sonntag 2 Stunden filmen. Küche, Food, Hände, fertige Teller, Raum, Deko, Atmosphäre."></textarea>
 
 <button onclick="autoPlan()">Automatisch entscheiden + alles füllen</button>
-<button class="dark" onclick="copyOut('autoOut')">Alles kopieren</button>
-<div id="autoOut" class="output">Noch keine automatische Empfehlung.</div>
+<button class="dark" onclick="copyOut('fullOut')">Alles kopieren</button>
+<div id="statusOut" class="output">Noch nichts erstellt.</div>
 </div>
+
+<div class="card"><h2>1. Entscheidung</h2><div id="autoOut" class="output">Noch keine Entscheidung.</div></div>
+<div class="card"><h2>2. Kurs-Priorisierung</h2><div id="courseOutAuto" class="output">Noch keine Kurs-Priorisierung.</div></div>
+<div class="card"><h2>3. Content</h2><div id="contentOutAuto" class="output">Noch kein Content.</div></div>
+<div class="card"><h2>4. Ads</h2><div id="adOutAuto" class="output">Noch keine Ad.</div></div>
+<div class="card"><h2>5. Auftrag an App 2</h2><div id="taskOutAuto" class="output">Noch kein Auftrag.</div></div>
+<div id="fullOut" style="display:none"></div>
 </section>
 
 <section id="kurse" class="panel">
@@ -114,41 +121,27 @@ Anime Food Night, 26.06.2026, 180 CHF, 10 freie Plätze"></textarea>
 <section id="api" class="panel">
 <div class="card">
 <h2>API / Accounts</h2>
-<div class="notice">
-Instagram/Facebook/TikTok kann später verbunden werden, aber nicht sicher in GitHub Pages.
-Dafür braucht die App Vercel/Supabase Backend + Login + API-Zugriffe.
-</div>
-<div class="output">
-Benötigt für echte automatische Insights:
-
-1. Meta Developer App
-2. Instagram Business/Creator Account
-3. Facebook-Seite korrekt verbunden
-4. Meta Graph API Zugriff
-5. TikTok Business/Developer API oder manueller Import
-6. Backend, damit Tokens geheim bleiben
-
-Bis dahin:
-Insights manuell eintragen oder Screenshots/Exportdaten verwenden.
-</div>
+<div class="output">Instagram/Facebook/TikTok Insights gehen später nur mit Backend/API sicher. Diese Version ist ohne Account-Zugriff.</div>
 </div>
 </section>
-
-<p class="small">Diese Version aktualisiert Auto-Plan, Kurse, Content, Ads und App-2-Auftrag gleichzeitig.</p>
 </div>
 
 <script>
 document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.tab).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}));
 const v=id=>document.getElementById(id).value.trim();
 
+function setText(id,text){
+ const el=document.getElementById(id);
+ if(el){el.textContent=text;}
+}
+
 function scoreCourses(text){
  let lines=text.split('\n').map(x=>x.trim()).filter(Boolean);
  if(!lines.length) lines=['Feuer & Handwerk, 06.06.2026, 145 CHF, 9 freie Plätze'];
  return lines.map(line=>{
-  let nums=line.match(/\d+/g)||[];
   let free=99, price=0;
-  nums.forEach(n=>{let x=parseInt(n); if(x>80&&x<300) price=x;});
-  let m=line.match(/(\d+)\s*freie/i); if(m) free=parseInt(m[1]);
+  let priceMatch=line.match(/(\d+)\s*CHF/i); if(priceMatch) price=parseInt(priceMatch[1]);
+  let freeMatch=line.match(/(\d+)\s*freie/i); if(freeMatch) free=parseInt(freeMatch[1]);
   let lower=line.toLowerCase();
   let score=(20-free)+(price>=150?4:0)+(lower.includes('wine')?3:0)+(lower.includes('feuer')?3:0)+(lower.includes('anime')?2:0);
   return {line,free,price,score};
@@ -168,69 +161,42 @@ function autoPlan(){
 Hauptziel:
 ${goal}
 
-1. Priorität:
+Was zuerst gepusht wird:
 ${top.line}
 
-${second ? '2. Danach:\n'+second.line : ''}
+${second ? 'Danach:\n'+second.line : ''}
 
 Warum:
-- Dieser Kurs hat aktuell die höchste Verkaufs-Priorität.
-- Kurse mit freien Plätzen, nahem Datum, gutem Preis und starkem Bildmaterial werden zuerst gepusht.
-- Buchungen sind wichtiger als Likes.
-
-WOCHENPLAN
-
-Montag:
-Story: Kurs-Reminder + Plätze frei
-
-Dienstag:
-Reel: ${top.line}
-Hook: Das ist kein normaler Kochkurs – das ist LebensArt Solothurn.
-
-Mittwoch:
-Story: Florence / Behind the scenes
-
-Donnerstag:
-Team-Event Story + Firmen-CTA
-
-Freitag:
-Food/Atmosphäre-Reel
-
-Samstag:
-Ad vorbereiten und freigeben
-
-Sonntag:
-Wochenrückblick + nächste Kurse`;
+- Dieser Kurs hat höchste Verkaufs-Priorität.
+- Freie Plätze + Preis + gute Film-Möglichkeit = Push.
+- Buchungen sind wichtiger als Likes.`;
 
  const course=`KURS-PRIORISIERUNG
 
-Höchste Priorität:
-${top.line}
+1. ${top.line}
+Priorität: HOCH
 
-Bewertung:
-HOCH
+Reihenfolge:
+${ranked.map((r,i)=>`${i+1}. ${r.line}`).join('\n')}
 
 Aktion:
-1. Reel erstellen
-2. Story-Serie machen
-3. Ad mit 50 CHF vorbereiten
-4. App 2 soll Material liefern
+- Reel erstellen
+- Story-Serie machen
+- Ad mit 50 CHF vorbereiten
+- Auftrag an App 2 erstellen`;
 
-Weitere Reihenfolge:
-${ranked.map((r,i)=>`${i+1}. ${r.line}`).join('\n')}`;
-
- const content=`CONTENT FÜR ${top.line}
+ const content=`CONTENT FÜR:
+${top.line}
 
 HOOK:
 Das ist kein normaler Kochkurs – das ist LebensArt Solothurn.
 
 REEL-TEXT:
-Feuer, Genuss und echtes Handwerk.
-Erlebe einen Abend, der mehr ist als nur ein Rezept.
+Genuss, Handwerk und ein Abend, der bleibt.
 
 CAPTION:
 ${top.line}
-Gemeinsam kochen, geniessen und einen Abend erleben, der bleibt.
+Gemeinsam kochen, geniessen und etwas Besonderes erleben.
 Jetzt Platz sichern oder Anfrage senden.
 
 CTA:
@@ -240,9 +206,9 @@ HASHTAGS:
 #LebensArtSolothurn #Solothurn #Kochkurs #FoodSchweiz #Genuss #TeamEvent #Privatanlass
 
 STORY-SERIE:
-1. Food Close-up: „So sieht LebensArt aus“
-2. Florence/Atmosphäre: „Gemeinsam kochen statt nur essen gehen“
-3. CTA: „Jetzt Platz sichern“`;
+1. Food Close-up
+2. Florence / Atmosphäre
+3. Plätze sichern`;
 
  const ad=`AD-VORBEREITUNG
 
@@ -253,25 +219,19 @@ Ziel:
 Kursbuchungen
 
 Budget:
-50 CHF Startbudget
+50 CHF
 
 Laufzeit:
 3–5 Tage
 
 Zielgruppe:
-Solothurn + 25 km
-Alter: 25–55
-Interessen: Food, Genuss, Kochen, Events, Paare, Firmen
+Solothurn + 25 km, 25–55, Food, Genuss, Paare, Firmen, Events
 
 Ad-Text:
 Erlebe einen besonderen Kochabend bei LebensArt Solothurn.
-Gemeinsam kochen, geniessen und Neues entdecken.
-
-CTA:
-Jetzt Platz sichern
 
 Creative:
-9:16 Reel mit Food, Florence, Atmosphäre und klarem Text.
+9:16 Reel mit Food, Florence, Atmosphäre und CTA.
 
 Freigabe:
 Wartet auf Miri.`;
@@ -286,8 +246,8 @@ Kursbuchungen
 
 Format:
 9:16 Reel, 15–25 Sekunden
-plus 3 Story-Clips
-plus 3 Fotos
++ 3 Story-Clips
++ 3 Fotos
 
 Szenen:
 ${material}
@@ -297,30 +257,37 @@ hochwertig, warm, modern, schwarz/orange/weiss
 
 Text im Video:
 LebensArt Solothurn – mehr als ein Kochkurs.
-Jetzt Platz sichern.
 
-Deadline:
-so schnell wie möglich, vor nächstem Postingtag
+CTA:
+Jetzt Platz sichern.
 
 Priorität:
 HOCH`;
 
- document.getElementById('autoOut').textContent=auto;
- document.getElementById('courseOut').textContent=course;
- document.getElementById('contentOut').textContent=content;
- document.getElementById('adOut').textContent=ad;
- document.getElementById('taskOut').textContent=task;
+ const full=`${auto}\n\n---\n\n${course}\n\n---\n\n${content}\n\n---\n\n${ad}\n\n---\n\n${task}`;
 
- localStorage.setItem('lastAutoPlan', JSON.stringify({auto,course,content,ad,task}));
+ setText('statusOut','✅ Alles wurde erstellt. Scrolle nach unten oder öffne die Tabs Kurse, Content, Ads und App 2.');
+ setText('autoOut',auto);
+ setText('courseOutAuto',course);
+ setText('contentOutAuto',content);
+ setText('adOutAuto',ad);
+ setText('taskOutAuto',task);
+ setText('courseOut',course);
+ setText('contentOut',content);
+ setText('adOut',ad);
+ setText('taskOut',task);
+ setText('fullOut',full);
+
+ localStorage.setItem('lastAutoPlan', JSON.stringify({auto,course,content,ad,task,full}));
 }
 
 function analyzeInsights(){
  let leads=parseInt(v('leads')||'0');
- document.getElementById('insightsOut').textContent=`Bewertung:
+ setText('insightsOut',`Bewertung:
 ${leads>0?'STARK – direkte Verkaufswirkung.':'SCHWACH/MITTEL – zu wenig direkte Buchungswirkung.'}
 
 Nächste Aktion:
-${leads>0?'Ähnliches Format wiederholen und Ad testen.':'Hook stärker machen, CTA klarer, Angebot konkreter.'}`;
+${leads>0?'Ähnliches Format wiederholen und Ad testen.':'Hook stärker machen, CTA klarer, Angebot konkreter.'}`);
 }
 
 function copyOut(id){navigator.clipboard.writeText(document.getElementById(id).textContent)}
@@ -328,11 +295,17 @@ function copyOut(id){navigator.clipboard.writeText(document.getElementById(id).t
 try{
  const saved=JSON.parse(localStorage.getItem('lastAutoPlan')||'null');
  if(saved){
-  document.getElementById('autoOut').textContent=saved.auto;
-  document.getElementById('courseOut').textContent=saved.course;
-  document.getElementById('contentOut').textContent=saved.content;
-  document.getElementById('adOut').textContent=saved.ad;
-  document.getElementById('taskOut').textContent=saved.task;
+  setText('statusOut','Gespeicherter letzter Plan geladen.');
+  setText('autoOut',saved.auto);
+  setText('courseOutAuto',saved.course);
+  setText('contentOutAuto',saved.content);
+  setText('adOutAuto',saved.ad);
+  setText('taskOutAuto',saved.task);
+  setText('courseOut',saved.course);
+  setText('contentOut',saved.content);
+  setText('adOut',saved.ad);
+  setText('taskOut',saved.task);
+  setText('fullOut',saved.full);
  }
 }catch(e){}
 </script>
