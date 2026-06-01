@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LebensArt Growth KI</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0f0f10;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 24px;
+    }
+    h1 { color: #f28a1e; }
+    .card {
+      background: #181818;
+      border: 1px solid #333;
+      border-radius: 18px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+    button {
+      background: #f28a1e;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+    textarea, input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      background: #111;
+      color: white;
+      margin: 8px 0;
+    }
+    .output {
+      white-space: pre-wrap;
+      background: #111;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>LebensArt Growth KI</h1>
+<p>Marketing-Zentrale für LebensArt Solothurn</p>
+
+<div class="card">
+  <h2>Dashboard</h2>
+  <p><b>Hauptziel:</b> Buchungen vor Reichweite.</p>
+  <p><b>Priorität:</b> öffentliche Kurse, Team-Events, Privatanlässe, Gutscheine.</p>
+</div>
+
+<div class="card">
+  <h2>Wochenplan erstellen</h2>
+  <textarea id="briefing" placeholder="Schreib hier z.B. welcher Kurs diese Woche gepusht werden soll"></textarea>
+  <button onclick="makePlan()">Plan erstellen</button>
+  <div id="plan" class="output">Noch kein Plan erstellt.</div>
+</div>
+
+<div class="card">
+  <h2>Content Creator</h2>
+  <input id="topic" placeholder="Thema, z.B. Feuer & Handwerk">
+  <button onclick="makeContent()">Content erstellen</button>
+  <div id="content" class="output">Noch kein Content erstellt.</div>
+</div>
+
+<div class="card">
+  <h2>Ads Vorbereitung</h2>
+  <input id="adtopic" placeholder="Kurs / Angebot">
+  <input id="budget" placeholder="Budget, z.B. 50 CHF">
+  <button onclick="makeAd()">Ad vorbereiten</button>
+  <div id="ad" class="output">Noch keine Ad vorbereitet.</div>
+</div>
+
+<div class="card">
+  <h2>Auftrag an App 2</h2>
+  <input id="tasktopic" placeholder="z.B. Reel für Wine & Dine">
+  <button onclick="makeTask()">Auftrag erstellen</button>
+  <div id="task" class="output">Noch kein Auftrag erstellt.</div>
+</div>
+
+<script>
+function makePlan() {
+  const briefing = document.getElementById('briefing').value || 'LebensArt Kurs pushen';
+  document.getElementById('plan').textContent =
+`WOCHENPLAN
+
+Ziel:
+Mehr Buchungen und Anfragen.
+
+Briefing:
+${briefing}
+
+Montag:
+Story mit Kurs-Reminder.
+
+Dienstag:
+Reel mit starkem Food-Hook.
+
+Mittwoch:
+Küchen-Trick + CTA.
+
+Donnerstag:
+Team-Event Story.
+
+Freitag:
+Behind-the-scenes mit Florence.
+
+Samstag:
+Buchungs-Reminder.
+
+Sonntag:
+Wochenrückblick + nächste Kurse.
+
+Priorität:
+Buchungen vor Reichweite.`;
+}
+
+function makeContent() {
+  const topic = document.getElementById('topic').value || 'LebensArt Kochkurs';
+  document.getElementById('content').textContent =
+`HOOK:
+Das ist kein normaler Kochkurs – das ist LebensArt Solothurn.
+
+CAPTION:
+${topic} bei LebensArt Solothurn.
+Gemeinsam kochen, geniessen und einen Abend erleben, der mehr ist als nur ein Rezept.
+
+CTA:
+Jetzt Platz sichern oder Anfrage senden.
+
+HASHTAGS:
+#LebensArtSolothurn #Solothurn #Kochkurs #FoodSchweiz #TeamEvent #Privatanlass`;
+}
+
+function makeAd() {
+  const topic = document.getElementById('adtopic').value || 'LebensArt Angebot';
+  const budget = document.getElementById('budget').value || '50 CHF';
+  document.getElementById('ad').textContent =
+`AD VORBEREITUNG
+
+Angebot:
+${topic}
+
+Budget:
+${budget}
+
+Ziel:
+Mehr Buchungen oder Anfragen.
+
+Zielgruppe:
+Solothurn + 25 km, 25–55, Food, Genuss, Events, Firmen.
+
+Ad-Text:
+Erlebe einen besonderen Abend bei LebensArt Solothurn.
+
+CTA:
+Jetzt Platz sichern / Anfrage senden.
+
+Freigabe:
+Wartet auf Miri.`;
+}
+
+function makeTask() {
+  const topic = document.getElementById('tasktopic').value || 'Reel für LebensArt';
+  document.getElementById('task').textContent =
+`AUFTRAG AN APP 2
+
+Titel:
+${topic}
+
+Format:
+9:16 Reel
+
+Länge:
+15–25 Sekunden
+
+Szenen:
+1. Food Close-up
+2. Hände beim Kochen
+3. Florence / Atmosphäre
+4. Fertiger Teller
+5. CTA
+
+Stil:
+hochwertig, warm, modern, schwarz/orange/weiss.
+
+CTA:
+Jetzt Platz sichern.`;
+}
+</script>
+
+</body>
+</html>
