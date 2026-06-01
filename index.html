@@ -2,200 +2,273 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>LebensArt Growth KI</title>
   <style>
-    body {
-      margin: 0;
-      background: #0f0f10;
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 24px;
-    }
-    h1 { color: #f28a1e; }
-    .card {
-      background: #181818;
-      border: 1px solid #333;
-      border-radius: 18px;
-      padding: 18px;
-      margin: 16px 0;
-    }
-    button {
-      background: #f28a1e;
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-    textarea, input, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #333;
-      background: #111;
-      color: white;
-      margin: 8px 0;
-    }
-    .output {
-      white-space: pre-wrap;
-      background: #111;
-      padding: 12px;
-      border-radius: 12px;
-      margin-top: 12px;
-    }
+    *{box-sizing:border-box}
+    :root{--bg:#0f0f10;--card:#181818;--line:#333;--muted:#b9b9b9;--orange:#f28a1e}
+    body{margin:0;background:#0f0f10;color:white;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+    .app{max-width:980px;margin:0 auto;padding:22px 16px 100px}
+    h1{color:var(--orange);margin:0 0 6px}
+    .muted{color:var(--muted)}
+    .tabs{position:sticky;top:0;background:#0f0f10;display:flex;gap:8px;overflow-x:auto;padding:12px 0;z-index:5}
+    .tab{border:1px solid var(--line);background:#1d1d1f;color:white;border-radius:999px;padding:10px 13px;font-weight:800;white-space:nowrap}
+    .tab.active{background:var(--orange);color:#111}
+    .panel{display:none}.panel.active{display:block}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0}
+    input,select,textarea{width:100%;padding:13px;border-radius:14px;border:1px solid var(--line);background:#0d0d0d;color:white;margin:7px 0 10px;font-size:16px}
+    textarea{min-height:90px}
+    button{background:var(--orange);border:0;border-radius:13px;padding:12px 15px;font-weight:900;color:#111;margin:7px 6px 7px 0}
+    button.secondary{background:#252529;color:white;border:1px solid var(--line)}
+    .output{white-space:pre-wrap;background:#0d0d0d;border:1px solid var(--line);border-radius:15px;padding:13px;margin-top:12px;line-height:1.45}
+    .badge{display:inline-block;background:#25180b;border:1px solid #5b3511;color:#ffbd7b;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900;margin-bottom:8px}
+    .grid{display:grid;gap:12px}.two{grid-template-columns:1fr}
+    .stat{background:#101010;border:1px solid var(--line);border-radius:16px;padding:14px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{font-size:20px}
+    label{font-weight:800;display:block;margin-top:10px}
+    @media(min-width:760px){.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:repeat(3,1fr)}}
   </style>
 </head>
 <body>
+<div class="app">
+  <h1>LebensArt Growth KI</h1>
+  <p class="muted">Marketing-Zentrale für LebensArt Solothurn</p>
 
-<h1>LebensArt Growth KI</h1>
-<p>Marketing-Zentrale für LebensArt Solothurn</p>
+  <nav class="tabs">
+    <button class="tab active" data-tab="dashboard">Dashboard</button>
+    <button class="tab" data-tab="ziele">Ziele</button>
+    <button class="tab" data-tab="kurse">Kurse</button>
+    <button class="tab" data-tab="posting">Postingplan</button>
+    <button class="tab" data-tab="content">Content</button>
+    <button class="tab" data-tab="ads">Ads</button>
+    <button class="tab" data-tab="insights">Insights</button>
+    <button class="tab" data-tab="wissen">Wissen</button>
+    <button class="tab" data-tab="app2">App 2</button>
+  </nav>
 
-<div class="card">
-  <h2>Dashboard</h2>
-  <p><b>Hauptziel:</b> Buchungen vor Reichweite.</p>
-  <p><b>Priorität:</b> öffentliche Kurse, Team-Events, Privatanlässe, Gutscheine.</p>
-</div>
+  <section class="panel active" id="dashboard">
+    <div class="card"><span class="badge">Dashboard</span><h2>Heute: Buchungen vor Reichweite</h2>
+      <div class="grid three">
+        <div class="stat"><span>Monatsziel</span><strong>30k CHF</strong></div>
+        <div class="stat"><span>Follower Ziel</span><strong>+500</strong></div>
+        <div class="stat"><span>Priorität</span><strong>Kurse</strong></div>
+      </div>
+      <button onclick="dailyTask()">Heute Aufgabe erstellen</button><div id="dailyOut" class="output">Noch keine Tagesaufgabe.</div>
+    </div>
+  </section>
 
-<div class="card">
-  <h2>Wochenplan erstellen</h2>
-  <textarea id="briefing" placeholder="Schreib hier z.B. welcher Kurs diese Woche gepusht werden soll"></textarea>
-  <button onclick="makePlan()">Plan erstellen</button>
-  <div id="plan" class="output">Noch kein Plan erstellt.</div>
-</div>
+  <section class="panel" id="ziele">
+    <div class="card"><span class="badge">Ziele</span><h2>Ziele speichern & prüfen</h2>
+      <div class="grid two">
+        <div><label>Monatsumsatz aktuell</label><input id="revNow" placeholder="z.B. 12000"></div>
+        <div><label>Monatsumsatz Ziel</label><input id="revGoal" value="30000"></div>
+        <div><label>Follower aktuell</label><input id="folNow" placeholder="z.B. 850"></div>
+        <div><label>Follower Ziel</label><input id="folGoal" value="500"></div>
+      </div>
+      <button onclick="saveGoals()">Ziele speichern</button><button onclick="checkGoals()" class="secondary">Fortschritt prüfen</button>
+      <div id="goalsOut" class="output">Noch keine Ziele geprüft.</div>
+    </div>
+  </section>
 
-<div class="card">
-  <h2>Content Creator</h2>
-  <input id="topic" placeholder="Thema, z.B. Feuer & Handwerk">
-  <button onclick="makeContent()">Content erstellen</button>
-  <div id="content" class="output">Noch kein Content erstellt.</div>
-</div>
+  <section class="panel" id="kurse">
+    <div class="card"><span class="badge">Kurse</span><h2>Kurs erfassen & priorisieren</h2>
+      <label>Kursname</label><input id="courseName" placeholder="z.B. Feuer & Handwerk">
+      <div class="grid two"><div><label>Datum</label><input id="courseDate" placeholder="YYYY-MM-DD"></div><div><label>Preis</label><input id="coursePrice" placeholder="145"></div><div><label>Freie Plätze</label><input id="courseFree" placeholder="9"></div><div><label>Max. Plätze</label><input id="courseMax" value="16"></div></div>
+      <label>Beschreibung</label><textarea id="courseDesc"></textarea>
+      <button onclick="saveCourse()">Kurs speichern</button><button onclick="prioritizeCourse()" class="secondary">Kurs bewerten</button><div id="courseOut" class="output">Noch kein Kurs bewertet.</div>
+    </div>
+  </section>
 
-<div class="card">
-  <h2>Ads Vorbereitung</h2>
-  <input id="adtopic" placeholder="Kurs / Angebot">
-  <input id="budget" placeholder="Budget, z.B. 50 CHF">
-  <button onclick="makeAd()">Ad vorbereiten</button>
-  <div id="ad" class="output">Noch keine Ad vorbereitet.</div>
-</div>
+  <section class="panel" id="posting">
+    <div class="card"><span class="badge">Postingplan</span><h2>Wochenplan erstellen</h2>
+      <label>Hauptziel der Woche</label><input id="weekGoal" placeholder="z.B. Feuer & Handwerk füllen">
+      <label>Kurse / Angebote</label><textarea id="weekOffers"></textarea>
+      <button onclick="makeWeekPlan()">Wochenplan generieren</button><div id="weekOut" class="output">Noch kein Wochenplan.</div>
+    </div>
+  </section>
 
-<div class="card">
-  <h2>Auftrag an App 2</h2>
-  <input id="tasktopic" placeholder="z.B. Reel für Wine & Dine">
-  <button onclick="makeTask()">Auftrag erstellen</button>
-  <div id="task" class="output">Noch kein Auftrag erstellt.</div>
+  <section class="panel" id="content">
+    <div class="card"><span class="badge">Content Creator</span><h2>Hook, Caption, Hashtags, Story, Reel</h2>
+      <label>Thema</label><input id="topic" placeholder="z.B. Wine & Dine">
+      <label>Plattform</label><select id="platform"><option>Instagram</option><option>TikTok</option><option>Facebook</option></select>
+      <label>Format</label><select id="format"><option>Reel</option><option>Story</option><option>Bildbeitrag</option><option>Carousel</option></select>
+      <label>Ziel</label><select id="contentGoal"><option>Kursbuchungen</option><option>Team-Event Anfragen</option><option>Privatanlass Anfragen</option><option>Gutscheine</option><option>Reichweite</option></select>
+      <button onclick="makeContent()">Alles erstellen</button><button onclick="copyOut('contentOut')" class="secondary">Kopieren</button><div id="contentOut" class="output">Noch kein Content.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="ads">
+    <div class="card"><span class="badge">Ads Manager</span><h2>Ad vorbereiten</h2>
+      <label>Kurs / Angebot</label><input id="adOffer"><label>Budget</label><input id="adBudget" value="50 CHF"><label>Zielgebiet</label><input id="adArea" value="Solothurn + 25 km"><label>Zielgruppe</label><textarea id="adAudience">25–55, Food, Genuss, Paare, Firmen, Events</textarea>
+      <button onclick="makeAd()">Ad vorbereiten</button><div id="adOut" class="output">Noch keine Ad.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="insights">
+    <div class="card"><span class="badge">Insights</span><h2>Insights eintragen & auswerten</h2>
+      <div class="grid two"><div><label>Plattform</label><input id="insPlatform"></div><div><label>Inhalt</label><input id="insName"></div><div><label>Reichweite</label><input id="reach"></div><div><label>Likes</label><input id="likes"></div><div><label>Klicks</label><input id="clicks"></div><div><label>Buchungen/Anfragen</label><input id="leads"></div></div>
+      <button onclick="analyzeInsights()">Auswerten</button><div id="insightsOut" class="output">Noch keine Auswertung.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="wissen">
+    <div class="card"><span class="badge">Wissen</span><h2>Wissen / Quellen speichern</h2>
+      <label>Quelle / Link</label><input id="source"><label>Thema</label><input id="knowledgeTopic"><label>Notiz</label><textarea id="knowledgeNote"></textarea>
+      <button onclick="saveKnowledge()">Wissen anwenden</button><div id="knowledgeOut" class="output">Noch kein Wissen angewendet.</div>
+    </div>
+  </section>
+
+  <section class="panel" id="app2">
+    <div class="card"><span class="badge">Auftrag an App 2</span><h2>Produktionsauftrag erstellen</h2>
+      <label>Auftragstitel</label><input id="taskTitle"><label>Ziel</label><input id="taskGoal" value="Kursbuchungen"><label>Format</label><input id="taskFormat" value="9:16 Reel"><label>Szenen</label><textarea id="taskScenes"></textarea>
+      <button onclick="makeTask()">Auftrag erstellen</button><div id="taskOut" class="output">Noch kein Auftrag.</div>
+    </div>
+  </section>
 </div>
 
 <script>
-function makePlan() {
-  const briefing = document.getElementById('briefing').value || 'LebensArt Kurs pushen';
-  document.getElementById('plan').textContent =
-`WOCHENPLAN
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.tab).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}));
+const v=id=>document.getElementById(id).value.trim();
+function saveLocal(key,obj){localStorage.setItem(key,JSON.stringify(obj))}
+function dailyTask(){document.getElementById('dailyOut').textContent=`Heute wichtigste Aufgabe:
+Den Kurs mit der höchsten Dringlichkeit pushen.
 
-Ziel:
-Mehr Buchungen und Anfragen.
+Warum:
+Buchungen und Anfragen sind wichtiger als reine Reichweite.
 
-Briefing:
-${briefing}
+Aktion:
+1. Kurs-Priorität prüfen.
+2. 1 Reel oder Story-Serie planen.
+3. Wenn Material fehlt: Auftrag an App 2 erstellen.
+4. Wenn Angebot klar ist: Ad vorbereiten.`}
+function saveGoals(){saveLocal('goals',{revNow:v('revNow'),revGoal:v('revGoal'),folNow:v('folNow'),folGoal:v('folGoal')});document.getElementById('goalsOut').textContent='Ziele gespeichert.'}
+function checkGoals(){document.getElementById('goalsOut').textContent=`Zielprüfung:
+Monatsumsatz Ziel: ${v('revGoal')||'30000'} CHF
+Follower Ziel: +${v('folGoal')||'500'}
 
-Montag:
-Story mit Kurs-Reminder.
+Empfehlung:
+1. Kurse mit nahem Datum pushen.
+2. Team-Events 1–2x pro Woche zeigen.
+3. Privatanlässe und Gutscheine in Storys wiederholen.
+4. Nur Content posten, der CTA und Ziel hat.`}
+function saveCourse(){saveLocal('lastCourse',{name:v('courseName'),date:v('courseDate'),price:v('coursePrice'),free:v('courseFree'),max:v('courseMax'),desc:v('courseDesc')});document.getElementById('courseOut').textContent='Kurs gespeichert.'}
+function prioritizeCourse(){const free=parseInt(v('courseFree')||'0');let pr=free>8?'hoch':free>3?'mittel':'niedrig';document.getElementById('courseOut').textContent=`Kurs: ${v('courseName')||'Unbenannt'}
+Priorität: ${pr}
 
-Dienstag:
-Reel mit starkem Food-Hook.
+Aktion:
+- Reel oder Story-Serie erstellen.
+- CTA klar: Jetzt Platz sichern.
+- Wenn gutes Material vorhanden: Ad vorbereiten.
+- Wenn Material fehlt: Auftrag an App 2 erstellen.`}
+function makeWeekPlan(){document.getElementById('weekOut').textContent=`WOCHENPLAN
 
-Mittwoch:
-Küchen-Trick + CTA.
+Hauptziel:
+${v('weekGoal')||'Kurse füllen'}
 
-Donnerstag:
-Team-Event Story.
+Montag: Story mit Kurs-Reminder
+Dienstag: Reel mit Food-Hook
+Mittwoch: Küchen-Trick + CTA
+Donnerstag: Team-Event Story
+Freitag: Behind-the-scenes mit Florence
+Samstag: Buchungs-Reminder
+Sonntag: Wochenrückblick + nächste Kurse
 
-Freitag:
-Behind-the-scenes mit Florence.
+Materialbedarf:
+App 2 soll 1 Reel, 3 Story-Clips und 3 Fotos vorbereiten.`}
+function makeContent(){const t=v('topic')||'LebensArt Kochkurs';document.getElementById('contentOut').textContent=`THEMA:
+${t}
 
-Samstag:
-Buchungs-Reminder.
-
-Sonntag:
-Wochenrückblick + nächste Kurse.
-
-Priorität:
-Buchungen vor Reichweite.`;
-}
-
-function makeContent() {
-  const topic = document.getElementById('topic').value || 'LebensArt Kochkurs';
-  document.getElementById('content').textContent =
-`HOOK:
+HOOK:
 Das ist kein normaler Kochkurs – das ist LebensArt Solothurn.
 
 CAPTION:
-${topic} bei LebensArt Solothurn.
+${t} bei LebensArt Solothurn.
 Gemeinsam kochen, geniessen und einen Abend erleben, der mehr ist als nur ein Rezept.
 
 CTA:
 Jetzt Platz sichern oder Anfrage senden.
 
 HASHTAGS:
-#LebensArtSolothurn #Solothurn #Kochkurs #FoodSchweiz #TeamEvent #Privatanlass`;
-}
+#LebensArtSolothurn #Solothurn #Kochkurs #FoodSchweiz #TeamEvent #Privatanlass #Genuss
 
-function makeAd() {
-  const topic = document.getElementById('adtopic').value || 'LebensArt Angebot';
-  const budget = document.getElementById('budget').value || '50 CHF';
-  document.getElementById('ad').textContent =
-`AD VORBEREITUNG
+STORY-IDEE:
+1. Blick auf Gericht
+2. Florence / Atmosphäre
+3. Plätze sichern CTA
+
+AUFTRAG AN APP 2:
+9:16 Reel, 15–25 Sek., hochwertig, warm, modern.`}
+function makeAd(){document.getElementById('adOut').textContent=`AD VORBEREITUNG
 
 Angebot:
-${topic}
+${v('adOffer')||'LebensArt Angebot'}
 
 Budget:
-${budget}
+${v('adBudget')||'50 CHF'}
 
-Ziel:
-Mehr Buchungen oder Anfragen.
+Zielgebiet:
+${v('adArea')||'Solothurn + 25 km'}
 
 Zielgruppe:
-Solothurn + 25 km, 25–55, Food, Genuss, Events, Firmen.
+${v('adAudience')||'Food, Genuss, Events'}
 
 Ad-Text:
 Erlebe einen besonderen Abend bei LebensArt Solothurn.
+
+Creative:
+9:16 Reel mit Food-Close-up, Florence, Atmosphäre und CTA.
 
 CTA:
 Jetzt Platz sichern / Anfrage senden.
 
 Freigabe:
-Wartet auf Miri.`;
-}
+Wartet auf Miri.`}
+function analyzeInsights(){const leads=parseInt(v('leads')||'0');document.getElementById('insightsOut').textContent=`INSIGHTS-AUSWERTUNG
 
-function makeTask() {
-  const topic = document.getElementById('tasktopic').value || 'Reel für LebensArt';
-  document.getElementById('task').textContent =
-`AUFTRAG AN APP 2
+Inhalt: ${v('insName')||'Unbenannt'}
+Reichweite: ${v('reach')||'0'}
+Likes: ${v('likes')||'0'}
+Klicks: ${v('clicks')||'0'}
+Buchungen/Anfragen: ${v('leads')||'0'}
+
+Bewertung:
+${leads>0?'Stark, weil direkte Verkaufswirkung vorhanden.':'Mittel/schwach, weil noch zu wenig direkte Buchungswirkung.'}
+
+Nächste Aktion:
+${leads>0?'Ähnliches Format wiederholen und ggf. Ad testen.':'Hook, CTA und Angebot klarer machen.'}`}
+function saveKnowledge(){document.getElementById('knowledgeOut').textContent=`WISSEN ANGEWENDET
+
+Quelle: ${v('source')||'unbekannt'}
+Thema: ${v('knowledgeTopic')||'unbekannt'}
+Learning: ${v('knowledgeNote')||'keine Notiz'}
+
+LebensArt-Anwendung:
+Nur übernehmen, wenn es hochwertig wirkt, zur Schweiz/Solothurn passt und Buchungen oder Vertrauen bringt.`}
+function makeTask(){document.getElementById('taskOut').textContent=`AUFTRAG AN APP 2
 
 Titel:
-${topic}
+${v('taskTitle')||'LebensArt Reel'}
+
+Ziel:
+${v('taskGoal')||'Kursbuchungen'}
 
 Format:
-9:16 Reel
-
-Länge:
-15–25 Sekunden
+${v('taskFormat')||'9:16 Reel'}
 
 Szenen:
-1. Food Close-up
-2. Hände beim Kochen
-3. Florence / Atmosphäre
-4. Fertiger Teller
-5. CTA
+${v('taskScenes')||'Food Close-up, Hände, Florence, Atmosphäre, fertiger Teller'}
 
 Stil:
 hochwertig, warm, modern, schwarz/orange/weiss.
 
-CTA:
-Jetzt Platz sichern.`;
-}
-</script>
+Text im Video:
+LebensArt Solothurn – mehr als ein Kochkurs.
 
+CTA:
+Jetzt Platz sichern.
+
+Priorität:
+hoch, wenn Kursdatum nah oder viele Plätze frei.`}
+function copyOut(id){navigator.clipboard.writeText(document.getElementById(id).textContent)}
+</script>
 </body>
 </html>
